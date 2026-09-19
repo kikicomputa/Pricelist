@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Computa Admin Console</title>
-  <style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #020617; }
-    iframe { border: none; width: 100%; height: 100%; }
-  </style>
-</head>
-<body>
-  <iframe src="https://script.google.com/macros/s/AKfycby6OEkuPKc_ik4h7HQfmyqIlVAVlVopjM6ntwH2YUtTiGm_Q5yJ8dwMB5m6mUrDgkslEg/exec" allow="camera; microphone"></iframe>
-</body>
-</html>
+const API_URL = "https://script.google.com/macros/s/AKfycby6OEkuPKc_ik4h7HQfmyqIlVAVlVopjM6ntwH2YUtTiGm_Q5yJ8dwMB5m6mUrDgkslEg/exec"; // Masukkan link Web App Anda di sini
+
+// Muat data live dari Google Sheets
+fetch(API_URL + "?format=json")
+  .then(res => res.json())
+  .then(data => {
+    database = data;
+    initDashboard(); // Tampilkan dashboard dengan data terbaru Google Sheets
+  })
+  .catch(err => {
+    console.error("Gagal memuat data dari Google Sheets:", err);
+    initDashboard();
+  });
