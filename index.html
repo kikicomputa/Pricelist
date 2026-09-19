@@ -1,13 +1,1059 @@
-const API_URL = "https://script.google.com/macros/s/AKfycby6OEkuPKc_ik4h7HQfmyqIlVAVlVopjM6ntwH2YUtTiGm_Q5yJ8dwMB5m6mUrDgkslEg/exec"; // Masukkan link Web App Anda di sini
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Price List Computa - Official Catalog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --background: #fafafa;
+      --foreground: #09090b;
+      --card: #ffffff;
+      --card-foreground: #09090b;
+      --border: #e4e4e7;
+      --border-subtle: #f4f4f5;
+      --muted: #71717a;
+      --muted-foreground: #a1a1aa;
+      --primary: #18181b;
+      --primary-foreground: #fafafa;
+      --emerald: #059669;
+      --emerald-subtle: #f0fdf4;
+      --emerald-border: #bbf7d0;
+      --emerald-text: #15803d;
+      --radius-lg: 8px;
+      --radius-md: 6px;
+      --radius-sm: 4px;
+    }
 
-// Muat data live dari Google Sheets
-fetch(API_URL + "?format=json")
-  .then(res => res.json())
-  .then(data => {
-    database = data;
-    initDashboard(); // Tampilkan dashboard dengan data terbaru Google Sheets
-  })
-  .catch(err => {
-    console.error("Gagal memuat data dari Google Sheets:", err);
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══════════════════════════════════════════
+       DASHBOARD VIEW (shadcn/ui style)
+       ══════════════════════════════════════════ */
+    #dashboardView {
+      max-width: 1040px;
+      margin: 32px auto;
+      padding: 0 20px 60px;
+    }
+
+    .shadcn-header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      max-width: 640px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--emerald-subtle);
+      border: 1px solid var(--emerald-border);
+      color: var(--emerald-text);
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 9999px;
+      margin-bottom: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .header-badge.syncing {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+
+    .header-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--emerald);
+      border-radius: 50%;
+    }
+
+    .header-badge.syncing .header-badge-dot {
+      background: #2563eb;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    .shadcn-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--foreground);
+      margin-bottom: 6px;
+    }
+
+    .shadcn-header p {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      align-self: flex-start;
+    }
+
+    .btn-sync {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--foreground);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .btn-sync:hover {
+      background: #f4f4f5;
+      border-color: #d4d4d8;
+    }
+
+    .btn-sync.spinning svg {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header h2 {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .section-header span {
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .dash-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 92px;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+      transition: all 0.15s ease-in-out;
+    }
+
+    .dash-card:hover {
+      border-color: #a1a1aa;
+      box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+      transform: translateY(-2px);
+    }
+
+    .dash-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .dash-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--foreground);
+      letter-spacing: -0.01em;
+    }
+
+    .dash-badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      background: #f4f4f5;
+      color: #3f3f46;
+      border: 1px solid #e4e4e7;
+      white-space: nowrap;
+    }
+
+    .dash-badge.active {
+      background: var(--emerald-subtle);
+      color: var(--emerald-text);
+      border-color: var(--emerald-border);
+    }
+
+    .dash-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .dash-action-text {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .dash-card:hover .dash-action-text {
+      color: var(--foreground);
+    }
+
+    .dash-arrow-icon {
+      color: var(--muted);
+      transition: transform 0.15s ease;
+    }
+
+    .dash-card:hover .dash-arrow-icon {
+      color: var(--foreground);
+      transform: translateX(3px);
+    }
+
+    /* ══════════════════════════════════════════
+       DOCUMENT VIEW (ON SCREEN)
+       ══════════════════════════════════════════ */
+    #documentView {
+      display: none;
+      padding-bottom: 80px;
+    }
+
+    .top-nav-bar {
+      max-width: 1180px;
+      margin: 14px auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 10px;
+    }
+
+    .btn-back-small {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--foreground);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .btn-back-small:hover {
+      background: #f4f4f5;
+      border-color: #d4d4d8;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 4px 6px;
+      border-radius: var(--radius-md);
+    }
+
+    .btn-page {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--foreground);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .btn-page:hover:not(:disabled) {
+      background: #f4f4f5;
+      border-color: var(--border);
+    }
+
+    .btn-page:disabled {
+      color: #a1a1aa;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .page-info {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+
+    /* ══════════════════════════════════════════
+       A4 LANDSCAPE SHEET PAGE (PAGINATED ON SCREEN)
+       ══════════════════════════════════════════ */
+    .sheet-page {
+      max-width: 1180px;
+      margin: 0 auto 32px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      padding: 24px 24px 18px;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+      position: relative;
+      display: none; /* Hanya tampilkan halaman aktif di layar */
+    }
+
+    .sheet-page.active-page {
+      display: block;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-title-group h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--foreground);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 3px;
+    }
+
+    .page-title-group .subtitle {
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+
+    .page-chip-badge {
+      background: #f4f4f5;
+      color: #3f3f46;
+      border: 1px solid var(--border);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.02em;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    /* ══════════════════════════════════════════
+       PRODUCT CARD (shadcn style)
+       ══════════════════════════════════════════ */
+    .product-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+      transition: border-color 0.15s ease;
+    }
+
+    .product-card:hover {
+      border-color: #a1a1aa;
+    }
+
+    .card-top {
+      padding: 9px 10px 8px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-height: 82px;
+      justify-content: space-between;
+    }
+
+    .card-tags-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .brand-chip {
+      background: #f4f4f5;
+      color: #18181b;
+      border: 1px solid #e4e4e7;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 1.5px 6px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .part-number-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5px;
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 130px;
+      text-align: right;
+    }
+
+    .product-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--foreground);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
+      min-height: 30px;
+      letter-spacing: -0.01em;
+    }
+
+    .price-chip-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 2px;
+      min-height: 22px;
+    }
+
+    .promo-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1px;
+    }
+
+    .strike-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .strike-price {
+      font-size: 8.5px;
+      color: #a1a1aa;
+      text-decoration: line-through;
+      font-weight: 500;
+    }
+
+    .discount-tag {
+      font-size: 8px;
+      font-weight: 700;
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 0.5px 3.5px;
+      border-radius: 2px;
+      border: 1px solid #fecaca;
+    }
+
+    .price-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: -0.02em;
+    }
+
+    .price-badge.regular {
+      color: #18181b;
+      margin-left: auto;
+    }
+
+    .price-badge.promo {
+      color: var(--emerald);
+    }
+
+    /* ══════════════════════════════════════════
+       CARD SPECS (CLEAN & NO ICONS)
+       ══════════════════════════════════════════ */
+    .card-specs {
+      padding: 7px 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      background: #ffffff;
+    }
+
+    .spec-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 9.5px;
+      line-height: 1.35;
+    }
+
+    .spec-key {
+      color: var(--muted);
+      font-weight: 500;
+      flex-shrink: 0;
+      font-size: 9px;
+    }
+
+    .spec-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #27272a;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 155px;
+    }
+
+    .page-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      color: var(--muted);
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ══════════════════════════════════════════
+       PRINT RULES (EXACT A4 LANDSCAPE - 12 PER SHEET)
+       ══════════════════════════════════════════ */
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 7mm 9mm 7mm 9mm;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 8.5pt !important;
+      }
+
+      #dashboardView, .top-nav-bar {
+        display: none !important;
+      }
+
+      #documentView {
+        display: block !important;
+        padding-bottom: 0 !important;
+      }
+
+      .sheet-page {
+        display: block !important; /* Saat print, cetak semua lembar berurutan */
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        height: 195mm !important;
+        overflow: hidden !important;
+      }
+
+      .sheet-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+
+      .page-header {
+        margin-bottom: 8px !important;
+        padding-bottom: 6px !important;
+      }
+
+      .page-title-group h1 {
+        font-size: 16pt !important;
+      }
+
+      .grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        grid-template-rows: repeat(3, 1fr) !important;
+        gap: 6px !important;
+        margin-bottom: 8px !important;
+      }
+
+      .product-card {
+        box-shadow: none !important;
+        border: 1px solid #d4d4d8 !important;
+      }
+
+      .card-top {
+        background: #fafafa !important;
+        padding: 6px 8px 5px !important;
+        min-height: 68px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .product-title {
+        font-size: 8pt !important;
+        min-height: 24px !important;
+      }
+
+      .card-specs {
+        padding: 5px 8px 6px !important;
+        gap: 2px !important;
+      }
+
+      .spec-line {
+        font-size: 7.2pt !important;
+      }
+
+      .spec-key {
+        font-size: 6.8pt !important;
+      }
+
+      .price-badge {
+        font-size: 8.5pt !important;
+      }
+
+      .page-footer {
+        padding-top: 5px !important;
+        font-size: 7pt !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- DASHBOARD -->
+  <div id="dashboardView">
+    <div class="shadcn-header">
+      <div class="header-left">
+        <div class="header-badge" id="syncStatusBadge">
+          <span class="header-badge-dot"></span>
+          <span id="syncStatusText">Menghubungkan ke Google Sheets...</span>
+        </div>
+        <h1>Price List Computa</h1>
+        <p>Pilih kategori atau merk produk di bawah ini untuk melihat dokumen resmi Computa. Format presisi 12 produk per lembar A4 Landscape.</p>
+      </div>
+      <div class="header-right">
+        <button class="btn-sync" id="btnSync" onclick="fetchLiveData()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          <span>Sinkronkan Data</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SEKSI 1: PER MERK LAPTOP -->
+    <div class="section-header">
+      <h2>Laptop Berdasarkan Merk</h2>
+      <span>Pilih merk spesifik</span>
+    </div>
+    <div class="cards-grid" id="brandGrid"></div>
+
+    <!-- SEKSI 2: KATEGORI PERANGKAT & KOMPILASI -->
+    <div class="section-header" style="margin-top: 24px;">
+      <h2>Kategori Perangkat & Kompilasi</h2>
+      <span>Kompilasi & Tipe Khusus</span>
+    </div>
+    <div class="cards-grid" id="typeGrid"></div>
+  </div>
+
+  <!-- DOKUMEN VIEW -->
+  <div id="documentView">
+    <div class="top-nav-bar">
+      <button class="btn-back-small" onclick="backToDashboard()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span>Kembali</span>
+      </button>
+      
+      <div class="pagination-controls" id="paginationControls">
+        <button class="btn-page" onclick="prevPage()" id="btnPrev">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+          Sebelumnya
+        </button>
+        <span class="page-info" id="pageInfoText">Halaman 1 dari 1</span>
+        <button class="btn-page" onclick="nextPage()" id="btnNext">
+          Selanjutnya
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="pagesContainer"></div>
+  </div>
+
+  <script>
+    // ════════════════════════════════════════════════════════════
+    // KONFIGURASI API GOOGLE APPS SCRIPT
+    // ════════════════════════════════════════════════════════════
+    const API_URL = "https://script.google.com/macros/s/AKfycby6OEkuPKc_ik4h7HQfmyqIlVAVlVopjM6ntwH2YUtTiGm_Q5yJ8dwMB5m6mUrDgkslEg/exec";
+
+    // Data Cadangan (Fallback jika jaringan lambat / offline)
+    let database = [
+      { category: "laptop", merk: "ASUS", namaBarang: "VIVOBOOK 14 A1404VAP-VIPS3851M (BLUE)", partNumber: "90NB13U1-M00N30", hrgPublish: "Rp 11.999.000", hrgOnline: "Rp 11.900.000", hasPromo: true, discountPercent: "1%", specs: [{label:"Processor",val:"Intel Core 3 100U"},{label:"RAM",val:"8GB DDR5"},{label:"Storage",val:"512GB"},{label:"Graphics",val:"Intel Graphics"},{label:"Display",val:"14 Inch FHD"},{label:"OS + Office",val:"Win 11 + OHS 2024"},{label:"Garansi",val:"2 Tahun ADP"}] },
+      { category: "laptop", merk: "ASUS", namaBarang: "ZENBOOK S14 UX5406SA-OLEDS7312TM", partNumber: "90NB14F4-M00LR0", hrgPublish: "Rp 30.999.000", hrgOnline: "Rp 27.700.000", hasPromo: true, discountPercent: "11%", specs: [{label:"Processor",val:"Core ULTRA 7 258V"},{label:"RAM",val:"UMA"},{label:"Storage",val:"32GB LPDDR5X"},{label:"Graphics",val:"1TB"},{label:"Display",val:"OLED 3K"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun ADP"}] },
+      { category: "laptop", merk: "Acer", namaBarang: "Aspire 5 Slim 14 Core i5 Iris Xe", partNumber: "A514-56P-54VG", hrgPublish: "Rp 10.499.000", hrgOnline: "Rp 9.999.000", hasPromo: true, discountPercent: "5%", specs: [{label:"Processor",val:"Core i5-1335U"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel Iris Xe"},{label:"Display",val:"14\" FHD"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun"}] },
+      { category: "laptop", merk: "Lenovo", namaBarang: "IdeaPad Slim 3 14IAH8 Core i5 Fast", partNumber: "14IAH8-83EQ001HID", hrgPublish: "Rp 9.499.000", hrgOnline: "", hasPromo: false, specs: [{label:"Processor",val:"Core i5-12450H"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel UHD"},{label:"Display",val:"14\" FHD IPS"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun"}] }
+    ];
+
+    // DEFINISI MERK (TANPA IKON & TANPA DESKRIPSI)
+    const brandCategories = [
+      { key: "brand_acer", brand: "Acer", name: "Laptop Acer" },
+      { key: "brand_asus", brand: "ASUS", name: "Laptop ASUS" },
+      { key: "brand_lenovo", brand: "Lenovo", name: "Laptop Lenovo" },
+      { key: "brand_hp", brand: "HP", name: "Laptop HP" },
+      { key: "brand_axioo", brand: "Axioo", name: "Laptop Axioo" },
+      { key: "brand_advan", brand: "Advan", name: "Laptop Advan" }
+    ];
+
+    // DEFINISI KATEGORI LAINNYA
+    const typeCategories = [
+      { key: "laptop_all", name: "Semua Laptop (Kompilasi)" },
+      { key: "gaming", name: "Laptop Gaming" },
+      { key: "aio", name: "PC All in One" },
+      { key: "desktop", name: "PC Desktop" },
+      { key: "2in1", name: "Laptop 2 in 1" }
+    ];
+
+    const ITEMS_PER_PAGE = 12;
+    let currentTotalPages = 1;
+    let activePageIndex = 0;
+
+    // ════════════════════════════════════════════════════════════
+    // FUNGSI PENGAMBILAN DATA DARI GOOGLE SHEETS
+    // ════════════════════════════════════════════════════════════
+    function fetchLiveData() {
+      const badge = document.getElementById('syncStatusBadge');
+      const badgeText = document.getElementById('syncStatusText');
+      const btnSync = document.getElementById('btnSync');
+
+      badge.classList.add('syncing');
+      badgeText.textContent = "Menghubungkan ke Google Sheets...";
+      btnSync.classList.add('spinning');
+
+      fetch(API_URL + "?format=json")
+        .then(res => {
+          if (!res.ok) throw new Error("Status respon HTTP: " + res.status);
+          return res.json();
+        })
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            database = data;
+            badge.classList.remove('syncing');
+            badgeText.textContent = `Terhubung Live Google Sheets (${data.length} Produk)`;
+          } else {
+            badge.classList.remove('syncing');
+            badgeText.textContent = "Data terhubung (0 produk ditemukan di sheet)";
+          }
+          btnSync.classList.remove('spinning');
+          initDashboard();
+        })
+        .catch(err => {
+          console.warn("Gagal mengambil data live, menggunakan data lokal:", err);
+          badge.classList.remove('syncing');
+          badgeText.textContent = "Mode Data Lokal (" + database.length + " Produk)";
+          btnSync.classList.remove('spinning');
+          initDashboard();
+        });
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // RENDER DASHBOARD
+    // ════════════════════════════════════════════════════════════
+    function initDashboard() {
+      // 1. Render Brand Grid
+      const brandGrid = document.getElementById('brandGrid');
+      let bHtml = '';
+      brandCategories.forEach(c => {
+        const count = database.filter(item => 
+          item.category === 'laptop' && (item.merk || '').toLowerCase().includes(c.brand.toLowerCase())
+        ).length;
+
+        bHtml += `
+          <div class="dash-card" onclick="openFiltered('${c.key}')">
+            <div class="dash-card-top">
+              <span class="dash-card-title">${c.name}</span>
+              <span class="dash-badge ${count > 0 ? 'active' : ''}">${count} Produk</span>
+            </div>
+            <div class="dash-card-bottom">
+              <span class="dash-action-text">Buka Price List</span>
+              <svg class="dash-arrow-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </div>`;
+      });
+      brandGrid.innerHTML = bHtml;
+
+      // 2. Render Type Grid
+      const typeGrid = document.getElementById('typeGrid');
+      let tHtml = '';
+      typeCategories.forEach(c => {
+        let count = 0;
+        if (c.key === 'laptop_all') {
+          count = database.filter(item => item.category === 'laptop').length;
+        } else {
+          count = database.filter(item => item.category === c.key).length;
+        }
+
+        tHtml += `
+          <div class="dash-card" onclick="openFiltered('${c.key}')">
+            <div class="dash-card-top">
+              <span class="dash-card-title">${c.name}</span>
+              <span class="dash-badge ${count > 0 ? 'active' : ''}">${count} Produk</span>
+            </div>
+            <div class="dash-card-bottom">
+              <span class="dash-action-text">Buka Price List</span>
+              <svg class="dash-arrow-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </div>`;
+      });
+      typeGrid.innerHTML = tHtml;
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // FILTER & TAMPILKAN PRICE LIST
+    // ════════════════════════════════════════════════════════════
+    function openFiltered(key) {
+      document.getElementById('dashboardView').style.display = 'none';
+      document.getElementById('documentView').style.display = 'block';
+
+      let baseTitle = "PRICE LIST COMPUTA";
+      let items = [];
+
+      const brandMatch = brandCategories.find(c => c.key === key);
+      if (brandMatch) {
+        baseTitle = `PRICE LIST LAPTOP ${brandMatch.brand.toUpperCase()}`;
+        items = database.filter(item => 
+          item.category === 'laptop' && (item.merk || '').toLowerCase().includes(brandMatch.brand.toLowerCase())
+        );
+      } else if (key === 'laptop_all') {
+        baseTitle = "PRICE LIST LAPTOP";
+        items = database.filter(item => item.category === 'laptop');
+      } else {
+        const typeMatch = typeCategories.find(c => c.key === key);
+        baseTitle = typeMatch ? `PRICE LIST ${typeMatch.name.toUpperCase()}` : "PRICE LIST";
+        items = database.filter(item => item.category === key);
+      }
+
+      const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE) || 1;
+      currentTotalPages = totalPages;
+      activePageIndex = 0;
+
+      const container = document.getElementById('pagesContainer');
+      container.innerHTML = '';
+
+      if (items.length === 0) {
+        document.getElementById('paginationControls').style.display = 'none';
+        container.innerHTML = `
+          <div style="text-align:center; padding:48px; background:#ffffff; border-radius:8px; border:1px solid #e4e4e7; max-width:800px; margin:20px auto;">
+            <h3 style="color:#09090b; font-size:15px; font-weight:600; margin-bottom:6px;">Belum Ada Produk</h3>
+            <p style="color:#71717a; font-size:13px;">Belum ada data untuk kategori ini di Google Sheets Anda.</p>
+          </div>`;
+        return;
+      }
+
+      for (let pIndex = 0; pIndex < totalPages; pIndex++) {
+        const pageNum = pIndex + 1;
+        const start = pIndex * ITEMS_PER_PAGE;
+        const end = Math.min(start + ITEMS_PER_PAGE, items.length);
+        const pageItems = items.slice(start, end);
+
+        let cardsHtml = '';
+        pageItems.forEach(p => {
+          let specRowsHtml = '';
+          (p.specs || []).forEach(s => {
+            specRowsHtml += `
+              <div class="spec-line">
+                <span class="spec-key">${s.label}</span>
+                <span class="spec-val" title="${s.val}">${s.val}</span>
+              </div>`;
+          });
+
+          let priceHtml = '';
+          if (p.hasPromo) {
+            priceHtml = `
+              <div class="promo-group">
+                <div class="strike-row">
+                  <span class="strike-price">${p.hrgPublish}</span>
+                  ${p.discountPercent ? `<span class="discount-tag">-${p.discountPercent}</span>` : ''}
+                </div>
+              </div>
+              <span class="price-badge promo" title="Harga Promo Online">${p.hrgOnline}</span>
+            `;
+          } else {
+            priceHtml = `
+              <span class="price-badge regular" title="Harga Publish">${p.hrgPublish}</span>
+            `;
+          }
+
+          cardsHtml += `
+            <div class="product-card">
+              <div class="card-top">
+                <div class="card-tags-row">
+                  <span class="brand-chip">${p.merk || 'PRODUK'}</span>
+                  <span class="part-number-text">${p.partNumber || '-'}</span>
+                </div>
+                <div class="product-title" title="${p.merk} ${p.namaBarang}">
+                  ${p.namaBarang || '-'}
+                </div>
+                <div class="price-chip-container">
+                  ${priceHtml}
+                </div>
+              </div>
+              <div class="card-specs">
+                ${specRowsHtml}
+              </div>
+            </div>`;
+        });
+
+        const pageElem = document.createElement('div');
+        pageElem.className = `sheet-page ${pIndex === 0 ? 'active-page' : ''}`;
+        pageElem.innerHTML = `
+          <div class="page-header">
+            <div class="page-title-group">
+              <h1>${baseTitle}</h1>
+              <p class="subtitle">Katalog Resmi Computa • Format Presisi A4 Landscape</p>
+            </div>
+            <div class="page-chip-badge">LEMBAR ${pageNum} DARI ${totalPages}</div>
+          </div>
+          <div class="grid">${cardsHtml}</div>
+          <div class="page-footer">
+            <span>Harga dapat berubah sewaktu-waktu tanpa pemberitahuan terlebih dahulu • Computa</span>
+            <span>Halaman ${pageNum} dari ${totalPages}</span>
+          </div>
+        `;
+        container.appendChild(pageElem);
+      }
+
+      updatePaginationControls();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ════════════════════════════════════════════════════════════
+    // KONTROL PAGINATION
+    // ════════════════════════════════════════════════════════════
+    function goToPage(index) {
+      if (index < 0 || index >= currentTotalPages) return;
+      activePageIndex = index;
+      
+      const pages = document.querySelectorAll('.sheet-page');
+      pages.forEach((p, idx) => {
+        if (idx === activePageIndex) {
+          p.classList.add('active-page');
+        } else {
+          p.classList.remove('active-page');
+        }
+      });
+
+      updatePaginationControls();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function prevPage() {
+      goToPage(activePageIndex - 1);
+    }
+
+    function nextPage() {
+      goToPage(activePageIndex + 1);
+    }
+
+    function updatePaginationControls() {
+      const controls = document.getElementById('paginationControls');
+      const info = document.getElementById('pageInfoText');
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+
+      if (currentTotalPages <= 1) {
+        controls.style.display = 'none';
+        return;
+      }
+
+      controls.style.display = 'flex';
+      info.textContent = `Halaman ${activePageIndex + 1} dari ${currentTotalPages}`;
+      btnPrev.disabled = activePageIndex === 0;
+      btnNext.disabled = activePageIndex === currentTotalPages - 1;
+    }
+
+    function backToDashboard() {
+      document.getElementById('documentView').style.display = 'none';
+      document.getElementById('dashboardView').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Jalankan inisialisasi awal & panggil data Google Sheets saat pertama dibuka
     initDashboard();
-  });
+    fetchLiveData();
+  </script>
+</body>
+</html>
