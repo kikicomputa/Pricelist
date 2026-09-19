@@ -648,7 +648,6 @@
       }
 
       .card-top {
-        background: #15803d !important;
         color: #ffffff !important;
         padding: 6px 8px 5px !important;
         min-height: 68px !important;
@@ -658,8 +657,9 @@
 
       .brand-chip {
         background: #ffffff !important;
-        color: #15803d !important;
         border: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
 
       .part-number-text {
@@ -791,14 +791,37 @@
       { category: "laptop", merk: "Lenovo", namaBarang: "IdeaPad Slim 3 14IAH8 Core i5 Fast", partNumber: "14IAH8-83EQ001HID", hrgPublish: "Rp 9.499.000", hrgOnline: "", hasPromo: false, specs: [{label:"Processor",val:"Core i5-12450H"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel UHD"},{label:"Display",val:"14\" FHD IPS"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun"}] }
     ];
 
-    // DEFINISI MERK (TANPA IKON & TANPA DESKRIPSI)
+    // ════════════════════════════════════════════════════════════
+    // KONFIGURASI WARNA HEADER BRAND RESMI (SESUAI PERMINTAAN)
+    // ════════════════════════════════════════════════════════════
+    const BRAND_COLORS = {
+      advan: "#eb008b",
+      asus: "#1982ff",
+      acer: "#60bf19",
+      hp: "#0ca1dc",
+      axioo: "#674ea2",
+      lenovo: "#e31f21"
+    };
+
+    function getBrandColor(merk) {
+      const m = (merk || '').toLowerCase().trim();
+      if (m.includes('advan')) return BRAND_COLORS.advan;
+      if (m.includes('asus')) return BRAND_COLORS.asus;
+      if (m.includes('acer')) return BRAND_COLORS.acer;
+      if (m.includes('hp')) return BRAND_COLORS.hp;
+      if (m.includes('axioo')) return BRAND_COLORS.axioo;
+      if (m.includes('lenovo')) return BRAND_COLORS.lenovo;
+      return '#15803d'; // Default fallback (Emerald Green)
+    }
+
+    // DEFINISI MERK (DENGAN WARNA IDENTITAS)
     const brandCategories = [
-      { key: "brand_acer", brand: "Acer", name: "Laptop Acer" },
-      { key: "brand_asus", brand: "ASUS", name: "Laptop ASUS" },
-      { key: "brand_lenovo", brand: "Lenovo", name: "Laptop Lenovo" },
-      { key: "brand_hp", brand: "HP", name: "Laptop HP" },
-      { key: "brand_axioo", brand: "Axioo", name: "Laptop Axioo" },
-      { key: "brand_advan", brand: "Advan", name: "Laptop Advan" }
+      { key: "brand_acer", brand: "Acer", name: "Laptop Acer", color: BRAND_COLORS.acer },
+      { key: "brand_asus", brand: "ASUS", name: "Laptop ASUS", color: BRAND_COLORS.asus },
+      { key: "brand_lenovo", brand: "Lenovo", name: "Laptop Lenovo", color: BRAND_COLORS.lenovo },
+      { key: "brand_hp", brand: "HP", name: "Laptop HP", color: BRAND_COLORS.hp },
+      { key: "brand_axioo", brand: "Axioo", name: "Laptop Axioo", color: BRAND_COLORS.axioo },
+      { key: "brand_advan", brand: "Advan", name: "Laptop Advan", color: BRAND_COLORS.advan }
     ];
 
     // DEFINISI KATEGORI LAINNYA
@@ -865,10 +888,10 @@
         ).length;
 
         bHtml += `
-          <div class="dash-card" onclick="openFiltered('${c.key}')">
+          <div class="dash-card" onclick="openFiltered('${c.key}')" style="border-left: 3.5px solid ${c.color};">
             <div class="dash-card-top">
               <span class="dash-card-title">${c.name}</span>
-              <span class="dash-badge ${count > 0 ? 'active' : ''}">${count} Produk</span>
+              <span class="dash-badge ${count > 0 ? 'active' : ''}" style="${count > 0 ? `background: ${c.color}15; color: ${c.color}; border-color: ${c.color}40;` : ''}">${count} Produk</span>
             </div>
             <div class="dash-card-bottom">
               <span class="dash-action-text">Buka Price List</span>
@@ -958,6 +981,8 @@
 
         let cardsHtml = '';
         pageItems.forEach(p => {
+          const brandColor = getBrandColor(p.merk);
+
           let specRowsHtml = '';
           (p.specs || []).forEach(s => {
             specRowsHtml += `
@@ -985,10 +1010,10 @@
           }
 
           cardsHtml += `
-            <div class="product-card">
-              <div class="card-top">
+            <div class="product-card" style="--brand-color: ${brandColor};">
+              <div class="card-top" style="background-color: ${brandColor} !important; border-bottom: 1px solid ${brandColor} !important;">
                 <div class="card-tags-row">
-                  <span class="brand-chip">${p.merk || 'PRODUK'}</span>
+                  <span class="brand-chip" style="color: ${brandColor} !important;">${p.merk || 'PRODUK'}</span>
                   <span class="part-number-text">${p.partNumber || '-'}</span>
                 </div>
                 <div class="product-title" title="${p.merk} ${p.namaBarang}">
