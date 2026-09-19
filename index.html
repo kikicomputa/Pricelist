@@ -427,13 +427,14 @@
 
     .card-top {
       padding: 9px 10px 8px;
-      background: #fafafa;
-      border-bottom: 1px solid var(--border);
+      background: #15803d; /* Header Berwarna Hijau */
+      border-bottom: 1px solid #166534;
       display: flex;
       flex-direction: column;
       gap: 4px;
       min-height: 82px;
       justify-content: space-between;
+      color: #ffffff;
     }
 
     .card-tags-row {
@@ -444,11 +445,11 @@
     }
 
     .brand-chip {
-      background: #f4f4f5;
-      color: #18181b;
-      border: 1px solid #e4e4e7;
+      background: #ffffff;
+      color: #15803d;
+      border: none;
       font-size: 9px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 1.5px 6px;
       border-radius: var(--radius-sm);
       text-transform: uppercase;
@@ -458,7 +459,7 @@
     .part-number-text {
       font-family: 'JetBrains Mono', monospace;
       font-size: 8.5px;
-      color: var(--muted);
+      color: rgba(255, 255, 255, 0.85);
       font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
@@ -470,7 +471,7 @@
     .product-title {
       font-size: 11px;
       font-weight: 600;
-      color: var(--foreground);
+      color: #ffffff;
       line-height: 1.35;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -504,7 +505,7 @@
 
     .strike-price {
       font-size: 8.5px;
-      color: #a1a1aa;
+      color: rgba(255, 255, 255, 0.75);
       text-decoration: line-through;
       font-weight: 500;
     }
@@ -512,11 +513,11 @@
     .discount-tag {
       font-size: 8px;
       font-weight: 700;
-      background: #fee2e2;
-      color: #b91c1c;
-      padding: 0.5px 3.5px;
+      background: #ffffff;
+      color: #dc2626;
+      padding: 0.5px 4px;
       border-radius: 2px;
-      border: 1px solid #fecaca;
+      border: none;
     }
 
     .price-badge {
@@ -527,12 +528,13 @@
     }
 
     .price-badge.regular {
-      color: #18181b;
+      color: #ffffff;
       margin-left: auto;
     }
 
     .price-badge.promo {
-      color: var(--emerald);
+      color: #fef08a; /* Kuning terang berani untuk kontras harga promo di atas hijau */
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
     }
 
     /* ══════════════════════════════════════════
@@ -646,16 +648,45 @@
       }
 
       .card-top {
-        background: #fafafa !important;
+        background: #15803d !important;
+        color: #ffffff !important;
         padding: 6px 8px 5px !important;
         min-height: 68px !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
 
+      .brand-chip {
+        background: #ffffff !important;
+        color: #15803d !important;
+        border: none !important;
+      }
+
+      .part-number-text {
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+
       .product-title {
+        color: #ffffff !important;
         font-size: 8pt !important;
         min-height: 24px !important;
+      }
+
+      .strike-price {
+        color: rgba(255, 255, 255, 0.75) !important;
+      }
+
+      .discount-tag {
+        background: #ffffff !important;
+        color: #dc2626 !important;
+      }
+
+      .price-badge.regular {
+        color: #ffffff !important;
+      }
+
+      .price-badge.promo {
+        color: #fef08a !important;
       }
 
       .card-specs {
@@ -669,10 +700,6 @@
 
       .spec-key {
         font-size: 6.8pt !important;
-      }
-
-      .price-badge {
-        font-size: 8.5pt !important;
       }
 
       .page-footer {
