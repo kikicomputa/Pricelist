@@ -739,10 +739,10 @@
     </div>
     <div class="cards-grid" id="brandGrid"></div>
 
-    <!-- SEKSI 2: KATEGORI PERANGKAT & KOMPILASI -->
+    <!-- SEKSI 2: KATEGORI PERANGKAT LAINNYA -->
     <div class="section-header" style="margin-top: 24px;">
-      <h2>Kategori Perangkat & Kompilasi</h2>
-      <span>Kompilasi & Tipe Khusus</span>
+      <h2>Kategori Perangkat Lainnya</h2>
+      <span>Tipe & Perangkat Khusus</span>
     </div>
     <div class="cards-grid" id="typeGrid"></div>
   </div>
@@ -817,7 +817,7 @@
     // DEFINISI MERK (DENGAN WARNA IDENTITAS)
     const brandCategories = [
       { key: "brand_acer", brand: "Acer", name: "Laptop Acer", color: BRAND_COLORS.acer },
-      { key: "brand_asus", brand: "Asus", name: "Laptop Asus", color: BRAND_COLORS.asus },
+      { key: "brand_asus", brand: "ASUS", name: "Laptop ASUS", color: BRAND_COLORS.asus },
       { key: "brand_lenovo", brand: "Lenovo", name: "Laptop Lenovo", color: BRAND_COLORS.lenovo },
       { key: "brand_hp", brand: "HP", name: "Laptop HP", color: BRAND_COLORS.hp },
       { key: "brand_axioo", brand: "Axioo", name: "Laptop Axioo", color: BRAND_COLORS.axioo },
@@ -826,7 +826,6 @@
 
     // DEFINISI KATEGORI LAINNYA
     const typeCategories = [
-      { key: "laptop_all", name: "Semua Laptop (Kompilasi)" },
       { key: "gaming", name: "Laptop Gaming" },
       { key: "aio", name: "PC All in One" },
       { key: "desktop", name: "PC Desktop" },
@@ -907,12 +906,7 @@
       const typeGrid = document.getElementById('typeGrid');
       let tHtml = '';
       typeCategories.forEach(c => {
-        let count = 0;
-        if (c.key === 'laptop_all') {
-          count = database.filter(item => item.category === 'laptop').length;
-        } else {
-          count = database.filter(item => item.category === c.key).length;
-        }
+        const count = database.filter(item => item.category === c.key).length;
 
         tHtml += `
           <div class="dash-card" onclick="openFiltered('${c.key}')">
@@ -947,9 +941,6 @@
         items = database.filter(item => 
           item.category === 'laptop' && (item.merk || '').toLowerCase().includes(brandMatch.brand.toLowerCase())
         );
-      } else if (key === 'laptop_all') {
-        baseTitle = "PRICE LIST LAPTOP";
-        items = database.filter(item => item.category === 'laptop');
       } else {
         const typeMatch = typeCategories.find(c => c.key === key);
         baseTitle = typeMatch ? `PRICE LIST ${typeMatch.name.toUpperCase()}` : "PRICE LIST";
