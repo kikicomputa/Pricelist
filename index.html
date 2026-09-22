@@ -788,7 +788,10 @@
       { category: "laptop", merk: "ASUS", namaBarang: "VIVOBOOK 14 A1404VAP-VIPS3851M (BLUE)", partNumber: "90NB13U1-M00N30", hrgPublish: "Rp 11.999.000", hrgOnline: "Rp 11.900.000", hasPromo: true, discountPercent: "1%", specs: [{label:"Processor",val:"Intel Core 3 100U"},{label:"RAM",val:"8GB DDR5"},{label:"Storage",val:"512GB"},{label:"Graphics",val:"Intel Graphics"},{label:"Display",val:"14 Inch FHD"},{label:"OS + Office",val:"Win 11 + OHS 2024"},{label:"Garansi",val:"2 Tahun ADP"}] },
       { category: "laptop", merk: "ASUS", namaBarang: "ZENBOOK S14 UX5406SA-OLEDS7312TM", partNumber: "90NB14F4-M00LR0", hrgPublish: "Rp 30.999.000", hrgOnline: "Rp 27.700.000", hasPromo: true, discountPercent: "11%", specs: [{label:"Processor",val:"Core ULTRA 7 258V"},{label:"RAM",val:"UMA"},{label:"Storage",val:"32GB LPDDR5X"},{label:"Graphics",val:"1TB"},{label:"Display",val:"OLED 3K"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun ADP"}] },
       { category: "laptop", merk: "Acer", namaBarang: "Aspire 5 Slim 14 Core i5 Iris Xe", partNumber: "A514-56P-54VG", hrgPublish: "Rp 10.499.000", hrgOnline: "Rp 9.999.000", hasPromo: true, discountPercent: "5%", specs: [{label:"Processor",val:"Core i5-1335U"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel Iris Xe"},{label:"Display",val:"14\" FHD"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun"}] },
-      { category: "laptop", merk: "Lenovo", namaBarang: "IdeaPad Slim 3 14IAH8 Core i5 Fast", partNumber: "14IAH8-83EQ001HID", hrgPublish: "Rp 9.499.000", hrgOnline: "", hasPromo: false, specs: [{label:"Processor",val:"Core i5-12450H"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel UHD"},{label:"Display",val:"14\" FHD IPS"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun"}] }
+      { category: "laptop", merk: "Lenovo", namaBarang: "IdeaPad Slim 3 14IAH8 Core i5 Fast", partNumber: "14IAH8-83EQ001HID", hrgPublish: "Rp 9.499.000", hrgOnline: "", hasPromo: false, specs: [{label:"Processor",val:"Core i5-12450H"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel UHD"},{label:"Display",val:"14\" FHD IPS"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun"}] },
+      { category: "laptop", merk: "Colorful", namaBarang: "EVOL P15 Core i7 RTX 4060 Gaming", partNumber: "EVOL-P15-01", hrgPublish: "Rp 15.999.000", hrgOnline: "Rp 14.999.000", hasPromo: true, discountPercent: "6%", specs: [{label:"Processor",val:"Core i7-13620H"},{label:"RAM",val:"16 GB DDR5"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"RTX 4060 8GB"},{label:"Display",val:"15.6\" QHD 165Hz"},{label:"OS + Office",val:"Win 11 Home"},{label:"Garansi",val:"2 Tahun"}] },
+      { category: "laptop", merk: "SPC", namaBarang: "Life Pro 14 Celeron Daily School", partNumber: "SPC-LP14-01", hrgPublish: "Rp 3.499.000", hrgOnline: "Rp 3.199.000", hasPromo: true, discountPercent: "9%", specs: [{label:"Processor",val:"Intel N4020"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"256 GB SSD"},{label:"Graphics",val:"Intel UHD"},{label:"Display",val:"14\" HD"},{label:"OS + Office",val:"Win 11 Home"},{label:"Garansi",val:"1 Tahun"}] },
+      { category: "laptop", merk: "Infinix", namaBarang: "INBook Y2 Plus Core i5 Slim Fast", partNumber: "XL29-i5", hrgPublish: "Rp 6.499.000", hrgOnline: "Rp 5.999.000", hasPromo: true, discountPercent: "8%", specs: [{label:"Processor",val:"Core i5-1155G7"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel Iris Xe"},{label:"Display",val:"15.6\" FHD IPS"},{label:"OS + Office",val:"Win 11 Home"},{label:"Garansi",val:"2 Tahun"}] }
     ];
 
     // ════════════════════════════════════════════════════════════
@@ -800,7 +803,10 @@
       acer: "#60bf19",
       hp: "#0ca1dc",
       axioo: "#674ea2",
-      lenovo: "#e31f21"
+      lenovo: "#e31f21",
+      colorful: "#e21033",
+      spc: "#272324",
+      infinix: "#65fe00"
     };
 
     function getBrandColor(merk) {
@@ -811,6 +817,9 @@
       if (m.includes('hp')) return BRAND_COLORS.hp;
       if (m.includes('axioo')) return BRAND_COLORS.axioo;
       if (m.includes('lenovo')) return BRAND_COLORS.lenovo;
+      if (m.includes('colorful') || m.includes('colorfull')) return BRAND_COLORS.colorful;
+      if (m.includes('spc')) return BRAND_COLORS.spc;
+      if (m.includes('infinix')) return BRAND_COLORS.infinix;
       return '#15803d'; // Default fallback (Emerald Green)
     }
 
@@ -821,7 +830,10 @@
       { key: "brand_lenovo", brand: "Lenovo", name: "Laptop Lenovo", color: BRAND_COLORS.lenovo },
       { key: "brand_hp", brand: "HP", name: "Laptop HP", color: BRAND_COLORS.hp },
       { key: "brand_axioo", brand: "Axioo", name: "Laptop Axioo", color: BRAND_COLORS.axioo },
-      { key: "brand_advan", brand: "Advan", name: "Laptop Advan", color: BRAND_COLORS.advan }
+      { key: "brand_advan", brand: "Advan", name: "Laptop Advan", color: BRAND_COLORS.advan },
+      { key: "brand_colorful", brand: "Colorful", name: "Laptop Colorful", color: BRAND_COLORS.colorful },
+      { key: "brand_spc", brand: "SPC", name: "Laptop SPC", color: BRAND_COLORS.spc },
+      { key: "brand_infinix", brand: "Infinix", name: "Laptop Infinix", color: BRAND_COLORS.infinix }
     ];
 
     // DEFINISI KATEGORI LAINNYA
@@ -882,9 +894,13 @@
       const brandGrid = document.getElementById('brandGrid');
       let bHtml = '';
       brandCategories.forEach(c => {
-        const count = database.filter(item => 
-          item.category === 'laptop' && (item.merk || '').toLowerCase().includes(c.brand.toLowerCase())
-        ).length;
+        const count = database.filter(item => {
+          if (item.category !== 'laptop') return false;
+          const m = (item.merk || '').toLowerCase();
+          const target = c.brand.toLowerCase();
+          if (target === 'colorful') return m.includes('colorful') || m.includes('colorfull');
+          return m.includes(target);
+        }).length;
 
         bHtml += `
           <div class="dash-card" onclick="openFiltered('${c.key}')" style="border-left: 3.5px solid ${c.color};">
@@ -938,9 +954,13 @@
       const brandMatch = brandCategories.find(c => c.key === key);
       if (brandMatch) {
         baseTitle = `PRICE LIST LAPTOP ${brandMatch.brand.toUpperCase()}`;
-        items = database.filter(item => 
-          item.category === 'laptop' && (item.merk || '').toLowerCase().includes(brandMatch.brand.toLowerCase())
-        );
+        items = database.filter(item => {
+          if (item.category !== 'laptop') return false;
+          const m = (item.merk || '').toLowerCase();
+          const target = brandMatch.brand.toLowerCase();
+          if (target === 'colorful') return m.includes('colorful') || m.includes('colorfull');
+          return m.includes(target);
+        });
       } else {
         const typeMatch = typeCategories.find(c => c.key === key);
         baseTitle = typeMatch ? `PRICE LIST ${typeMatch.name.toUpperCase()}` : "PRICE LIST";
@@ -973,6 +993,7 @@
         let cardsHtml = '';
         pageItems.forEach(p => {
           const brandColor = getBrandColor(p.merk);
+          const isNeon = (brandColor === BRAND_COLORS.infinix);
 
           let specRowsHtml = '';
           (p.specs || []).forEach(s => {
@@ -988,26 +1009,26 @@
             priceHtml = `
               <div class="promo-group">
                 <div class="strike-row">
-                  <span class="strike-price">${p.hrgPublish}</span>
-                  ${p.discountPercent ? `<span class="discount-tag">-${p.discountPercent}</span>` : ''}
+                  <span class="strike-price" style="${isNeon ? 'color: rgba(0,0,0,0.55) !important;' : ''}">${p.hrgPublish}</span>
+                  ${p.discountPercent ? `<span class="discount-tag" style="${isNeon ? 'background: #000000 !important; color: #ffffff !important;' : ''}">-${p.discountPercent}</span>` : ''}
                 </div>
               </div>
-              <span class="price-badge promo" title="Harga Promo Online">${p.hrgOnline}</span>
+              <span class="price-badge promo" style="${isNeon ? 'color: #000000 !important; font-weight: 800;' : ''}" title="Harga Promo Online">${p.hrgOnline}</span>
             `;
           } else {
             priceHtml = `
-              <span class="price-badge regular" title="Harga Publish">${p.hrgPublish}</span>
+              <span class="price-badge regular" style="${isNeon ? 'color: #000000 !important;' : ''}" title="Harga Publish">${p.hrgPublish}</span>
             `;
           }
 
           cardsHtml += `
             <div class="product-card" style="--brand-color: ${brandColor};">
-              <div class="card-top" style="background-color: ${brandColor} !important; border-bottom: 1px solid ${brandColor} !important;">
+              <div class="card-top" style="background-color: ${brandColor} !important; border-bottom: 1px solid ${brandColor} !important; ${isNeon ? 'color: #000000 !important;' : ''}">
                 <div class="card-tags-row">
-                  <span class="brand-chip" style="color: ${brandColor} !important;">${p.merk || 'PRODUK'}</span>
-                  <span class="part-number-text">${p.partNumber || '-'}</span>
+                  <span class="brand-chip" style="${isNeon ? 'background-color: #000000 !important; color: #65fe00 !important;' : `color: ${brandColor} !important;`}">${p.merk || 'PRODUK'}</span>
+                  <span class="part-number-text" style="${isNeon ? 'color: rgba(0,0,0,0.7) !important;' : ''}">${p.partNumber || '-'}</span>
                 </div>
-                <div class="product-title" title="${p.merk} ${p.namaBarang}">
+                <div class="product-title" style="${isNeon ? 'color: #000000 !important; font-weight: 700;' : ''}" title="${p.merk} ${p.namaBarang}">
                   ${p.namaBarang || '-'}
                 </div>
                 <div class="price-chip-container">
