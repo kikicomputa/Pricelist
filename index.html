@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Price List Computa - Official Catalog</title>
+  <title>Price List Computa — Official Catalog</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -66,6 +66,14 @@
       max-width: 640px;
     }
 
+    .header-badges-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
     .header-badge {
       display: inline-flex;
       align-items: center;
@@ -77,8 +85,14 @@
       font-size: 11px;
       font-weight: 600;
       border-radius: 9999px;
-      margin-bottom: 12px;
       transition: all 0.2s ease;
+    }
+
+    .header-badge-date {
+      background: #f4f4f5;
+      border-color: #e4e4e7;
+      color: #52525b;
+      font-weight: 500;
     }
 
     .header-badge.syncing {
@@ -715,12 +729,23 @@
   <div id="dashboardView">
     <div class="shadcn-header">
       <div class="header-left">
-        <div class="header-badge" id="syncStatusBadge">
-          <span class="header-badge-dot"></span>
-          <span id="syncStatusText">Menghubungkan ke Google Sheets...</span>
+        <div class="header-badges-row">
+          <div class="header-badge" id="syncStatusBadge">
+            <span class="header-badge-dot"></span>
+            <span id="syncStatusText">Menghubungkan ke Google Sheets...</span>
+          </div>
+          <div class="header-badge header-badge-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>Update: <strong class="catalog-date-display">22 September 2026</strong></span>
+          </div>
         </div>
         <h1>Price List Computa</h1>
-        <p>Pilih kategori atau merk produk di bawah ini untuk melihat dokumen resmi Computa. Format presisi 12 produk per lembar A4 Landscape.</p>
+        <p>Katalog produk digital resmi Computa. Pilih merk atau kategori untuk melihat ketersediaan unit dan pembaruan harga terkini per <span class="catalog-date-display">22 September 2026</span>.</p>
       </div>
       <div class="header-right">
         <button class="btn-sync" id="btnSync" onclick="fetchLiveData()">
@@ -779,6 +804,39 @@
 
   <script>
     // ════════════════════════════════════════════════════════════
+    // KONFIGURASI TANGGAL UPDATE KATALOG
+    // ════════════════════════════════════════════════════════════
+    // Opsi pengaturan:
+    // 1. "AUTO" : Otomatis mendeteksi tanggal upload / penyimpanan berkas HTML
+    // 2. Atau ketik tanggal manual, contoh: "22 September 2026"
+    const TANGGAL_UPLOAD = "AUTO";
+
+    const INDO_MONTHS = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    function getCatalogDate() {
+      if (TANGGAL_UPLOAD && TANGGAL_UPLOAD !== "AUTO") {
+        return TANGGAL_UPLOAD;
+      }
+      try {
+        const mod = new Date(document.lastModified);
+        if (!isNaN(mod.getTime())) {
+          return `${mod.getDate()} ${INDO_MONTHS[mod.getMonth()]} ${mod.getFullYear()}`;
+        }
+      } catch (e) {}
+      return "22 September 2026";
+    }
+
+    function applyDateToDom() {
+      const dateText = getCatalogDate();
+      document.querySelectorAll('.catalog-date-display').forEach(el => {
+        el.textContent = dateText;
+      });
+    }
+
+    // ════════════════════════════════════════════════════════════
     // KONFIGURASI API GOOGLE APPS SCRIPT
     // ════════════════════════════════════════════════════════════
     const API_URL = "https://script.google.com/macros/s/AKfycby6OEkuPKc_ik4h7HQfmyqIlVAVlVopjM6ntwH2YUtTiGm_Q5yJ8dwMB5m6mUrDgkslEg/exec";
@@ -817,10 +875,18 @@
       if (m.includes('hp')) return BRAND_COLORS.hp;
       if (m.includes('axioo')) return BRAND_COLORS.axioo;
       if (m.includes('lenovo')) return BRAND_COLORS.lenovo;
-      if (m.includes('colorful') || m.includes('colorful')) return BRAND_COLORS.colorful;
+      if (m.includes('colorful') || m.includes('colorfull')) return BRAND_COLORS.colorful;
       if (m.includes('spc')) return BRAND_COLORS.spc;
       if (m.includes('infinix')) return BRAND_COLORS.infinix;
       return '#15803d'; // Default fallback (Emerald Green)
+    }
+
+    function getNumericPrice(item) {
+      if (!item) return 0;
+      // Gunakan harga promo online jika aktif, atau harga publish
+      const raw = (item.hasPromo && item.hrgOnline) ? item.hrgOnline : (item.hrgPublish || '');
+      const digits = String(raw).replace(/\D/g, '');
+      return digits ? parseInt(digits, 10) : 0;
     }
 
     // DEFINISI MERK (DENGAN WARNA IDENTITAS)
@@ -898,7 +964,7 @@
           if (item.category !== 'laptop') return false;
           const m = (item.merk || '').toLowerCase();
           const target = c.brand.toLowerCase();
-          if (target === 'colorful') return m.includes('colorful') || m.includes('colorful');
+          if (target === 'colorful') return m.includes('colorful') || m.includes('colorfull');
           return m.includes(target);
         }).length;
 
@@ -939,6 +1005,7 @@
           </div>`;
       });
       typeGrid.innerHTML = tHtml;
+      applyDateToDom();
     }
 
     // ════════════════════════════════════════════════════════════
@@ -958,7 +1025,7 @@
           if (item.category !== 'laptop') return false;
           const m = (item.merk || '').toLowerCase();
           const target = brandMatch.brand.toLowerCase();
-          if (target === 'colorful') return m.includes('colorful') || m.includes('colorful');
+          if (target === 'colorful') return m.includes('colorful') || m.includes('colorfull');
           return m.includes(target);
         });
       } else {
@@ -966,6 +1033,15 @@
         baseTitle = typeMatch ? `PRICE LIST ${typeMatch.name.toUpperCase()}` : "PRICE LIST";
         items = database.filter(item => item.category === key);
       }
+
+      // URUTKAN DARI HARGA TERMURAH KE TERMAHAL (ASCENDING)
+      items.sort((a, b) => {
+        const pA = getNumericPrice(a);
+        const pB = getNumericPrice(b);
+        if (pA === 0 && pB > 0) return 1;
+        if (pB === 0 && pA > 0) return -1;
+        return pA - pB;
+      });
 
       const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE) || 1;
       currentTotalPages = totalPages;
@@ -1047,13 +1123,13 @@
           <div class="page-header">
             <div class="page-title-group">
               <h1>${baseTitle}</h1>
-              <p class="subtitle">Katalog Resmi Computa • Format Presisi A4 Landscape</p>
+              <p class="subtitle">Katalog Digital Resmi Computa • Update: ${getCatalogDate()} • Urutan Harga Termurah</p>
             </div>
-            <div class="page-chip-badge">LEMBAR ${pageNum} DARI ${totalPages}</div>
+            <div class="page-chip-badge">HALAMAN ${pageNum} DARI ${totalPages}</div>
           </div>
           <div class="grid">${cardsHtml}</div>
           <div class="page-footer">
-            <span>Harga dapat berubah sewaktu-waktu tanpa pemberitahuan terlebih dahulu • Computa</span>
+            <span>Harga dapat berubah sewaktu-waktu • Pembaruan: ${getCatalogDate()} • Computa</span>
             <span>Halaman ${pageNum} dari ${totalPages}</span>
           </div>
         `;
