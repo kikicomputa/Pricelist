@@ -1014,18 +1014,6 @@
     // ════════════════════════════════════════════════════════════
     const API_URL = "https://script.google.com/macros/s/AKfycby6OEkuPKc_ik4h7HQfmyqIlVAVlVopjM6ntwH2YUtTiGm_Q5yJ8dwMB5m6mUrDgkslEg/exec";
 
-    // Data Cadangan (Fallback jika jaringan lambat / offline)
-    let database = [
-      { category: "laptop", merk: "ASUS", namaBarang: "VIVOBOOK 14 A1404VAP-VIPS3851M (BLUE)", partNumber: "90NB13U1-M00N30", hrgPublish: "Rp 11.999.000", hrgOnline: "Rp 11.900.000", hasPromo: true, discountPercent: "1%", specs: [{label:"Processor",val:"Intel Core 3 100U"},{label:"RAM",val:"8GB DDR5"},{label:"Storage",val:"512GB"},{label:"Graphics",val:"Intel Graphics"},{label:"Display",val:"14 Inch FHD"},{label:"OS + Office",val:"Win 11 + OHS 2024"},{label:"Garansi",val:"2 Tahun ADP"}] },
-      { category: "laptop", merk: "ASUS", namaBarang: "ZENBOOK S14 UX5406SA-OLEDS7312TM", partNumber: "90NB14F4-M00LR0", hrgPublish: "Rp 30.999.000", hrgOnline: "Rp 27.700.000", hasPromo: true, discountPercent: "11%", specs: [{label:"Processor",val:"Core ULTRA 7 258V"},{label:"RAM",val:"UMA"},{label:"Storage",val:"32GB LPDDR5X"},{label:"Graphics",val:"1TB"},{label:"Display",val:"OLED 3K"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun ADP"}] },
-      { category: "laptop", merk: "Acer", namaBarang: "Aspire 5 Slim 14 Core i5 Iris Xe", partNumber: "A514-56P-54VG", hrgPublish: "Rp 10.499.000", hrgOnline: "Rp 9.999.000", hasPromo: true, discountPercent: "5%", specs: [{label:"Processor",val:"Core i5-1335U"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel Iris Xe"},{label:"Display",val:"14\" FHD"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun"}] },
-      { category: "laptop", merk: "Lenovo", namaBarang: "IdeaPad Slim 3 14IAH8 Core i5 Fast", partNumber: "14IAH8-83EQ001HID", hrgPublish: "Rp 9.499.000", hrgOnline: "", hasPromo: false, specs: [{label:"Processor",val:"Core i5-12450H"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel UHD"},{label:"Display",val:"14\" FHD IPS"},{label:"OS + Office",val:"Win 11 + OHS"},{label:"Garansi",val:"2 Tahun"}] },
-      { category: "laptop", merk: "Colorful", namaBarang: "EVOL P15 Core i7 RTX 4060 Gaming", partNumber: "EVOL-P15-01", hrgPublish: "Rp 15.999.000", hrgOnline: "Rp 14.999.000", hasPromo: true, discountPercent: "6%", specs: [{label:"Processor",val:"Core i7-13620H"},{label:"RAM",val:"16 GB DDR5"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"RTX 4060 8GB"},{label:"Display",val:"15.6\" QHD 165Hz"},{label:"OS + Office",val:"Win 11 Home"},{label:"Garansi",val:"2 Tahun"}] },
-      { category: "laptop", merk: "SPC", namaBarang: "Life Pro 14 Celeron Daily School", partNumber: "SPC-LP14-01", hrgPublish: "Rp 3.499.000", hrgOnline: "Rp 3.199.000", hasPromo: true, discountPercent: "9%", specs: [{label:"Processor",val:"Intel N4020"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"256 GB SSD"},{label:"Graphics",val:"Intel UHD"},{label:"Display",val:"14\" HD"},{label:"OS + Office",val:"Win 11 Home"},{label:"Garansi",val:"1 Tahun"}] },
-      { category: "laptop", merk: "Infinix", namaBarang: "INBook Y2 Plus Core i5 Slim Fast", partNumber: "XL29-i5", hrgPublish: "Rp 6.499.000", hrgOnline: "Rp 5.999.000", hasPromo: true, discountPercent: "8%", specs: [{label:"Processor",val:"Core i5-1155G7"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"512 GB SSD"},{label:"Graphics",val:"Intel Iris Xe"},{label:"Display",val:"15.6\" FHD IPS"},{label:"OS + Office",val:"Win 11 Home"},{label:"Garansi",val:"2 Tahun"}] },
-      { category: "laptop", merk: "Zyrex", namaBarang: "Cruiser 20 Core i3 SSD Fast", partNumber: "CR-20-I3", hrgPublish: "Rp 5.299.000", hrgOnline: "Rp 4.999.000", hasPromo: true, discountPercent: "6%", specs: [{label:"Processor",val:"Core i3-1115G4"},{label:"RAM",val:"8 GB DDR4"},{label:"Storage",val:"256 GB SSD"},{label:"Graphics",val:"Intel UHD"},{label:"Display",val:"14\" FHD IPS"},{label:"OS + Office",val:"Win 11 Home"},{label:"Garansi",val:"1 Tahun"}] }
-    ];
-
     // ════════════════════════════════════════════════════════════
     // KONFIGURASI WARNA HEADER BRAND RESMI (SESUAI PERMINTAAN)
     // ════════════════════════════════════════════════════════════
@@ -1068,7 +1056,7 @@
     // DEFINISI MERK (DENGAN WARNA IDENTITAS)
     const brandCategories = [
       { key: "brand_acer", brand: "Acer", name: "Laptop Acer", color: BRAND_COLORS.acer },
-      { key: "brand_asus", brand: "ASUS", name: "Laptop ASUS", color: BRAND_COLORS.asus },
+      { key: "brand_asus", brand: "Asus", name: "Laptop Asus", color: BRAND_COLORS.asus },
       { key: "brand_lenovo", brand: "Lenovo", name: "Laptop Lenovo", color: BRAND_COLORS.lenovo },
       { key: "brand_hp", brand: "HP", name: "Laptop HP", color: BRAND_COLORS.hp },
       { key: "brand_axioo", brand: "Axioo", name: "Laptop Axioo", color: BRAND_COLORS.axioo },
