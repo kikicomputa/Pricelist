@@ -1155,7 +1155,7 @@
 
     const ITEMS_PER_PAGE = 12;
     let currentTotalPages = 1;
-    let if (shouldResetPage) activePageIndex = 0;
+    let activePageIndex = 0;
 
     // ════════════════════════════════════════════════════════════
     // FUNGSI CACHE & PENGAMBILAN DATA CEPAT (STALE-WHILE-REVALIDATE)
@@ -1342,7 +1342,7 @@
 
       const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE) || 1;
       currentTotalPages = totalPages;
-      activePageIndex = 0;
+      if (shouldResetPage) activePageIndex = 0;
 
       const container = document.getElementById('pagesContainer');
       container.innerHTML = '';
