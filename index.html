@@ -525,13 +525,7 @@
     }
 
     .discount-tag {
-      font-size: 8px;
-      font-weight: 700;
-      background: #ffffff;
-      color: #dc2626;
-      padding: 0.5px 4px;
-      border-radius: 2px;
-      border: none;
+      display: none !important;
     }
 
     .price-badge {
@@ -1341,14 +1335,10 @@
 
           let priceHtml = '';
           if (p.hasPromo) {
-            let discStr = p.discountPercent ? String(p.discountPercent).trim() : '';
-            if (discStr && !discStr.startsWith('-')) discStr = '-' + discStr;
-
             priceHtml = `
               <div class="promo-group">
                 <div class="strike-row">
                   <span class="strike-price" style="${isNeon ? 'color: rgba(0,0,0,0.55) !important;' : ''}">${p.hrgPublish}</span>
-                  ${discStr ? `<span class="discount-tag" style="${isNeon ? 'background: #000000 !important; color: #ffffff !important;' : ''}">${discStr}</span>` : ''}
                 </div>
               </div>
               <span class="price-badge promo" style="${isNeon ? 'color: #000000 !important; font-weight: 800;' : ''}" title="Harga Promo Online">${p.hrgOnline}</span>
