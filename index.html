@@ -600,6 +600,179 @@
     }
 
     /* ══════════════════════════════════════════
+       RESPONSIVE RULES (TABLET & MOBILE)
+       ══════════════════════════════════════════ */
+    @media screen and (max-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media screen and (max-width: 640px) {
+      #dashboardView {
+        padding: 16px 14px 48px;
+        margin: 12px auto;
+      }
+
+      .shadcn-header {
+        padding: 20px 16px;
+        margin-bottom: 20px;
+        flex-direction: column;
+      }
+
+      .shadcn-header h1 {
+        font-size: 22px;
+      }
+
+      .header-right {
+        width: 100%;
+        margin-top: 4px;
+      }
+
+      .btn-sync {
+        width: 100%;
+        justify-content: center;
+        padding: 9px 14px;
+        font-size: 13px;
+      }
+
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 card menu berdampingan di mobile */
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+
+      .dash-card {
+        padding: 12px 10px;
+        min-height: 78px;
+      }
+
+      .dash-card-title {
+        font-size: 12.5px;
+      }
+
+      .dash-badge {
+        font-size: 9.5px;
+        padding: 2px 5px;
+      }
+
+      .dash-card-bottom {
+        margin-top: 8px;
+        padding-top: 6px;
+      }
+
+      .dash-action-text {
+        font-size: 10px;
+      }
+
+      .top-nav-bar {
+        padding: 0 6px;
+        margin: 10px auto 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .pagination-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .sheet-page {
+        margin: 0 4px 20px;
+        padding: 12px 8px;
+        border-radius: var(--radius-md);
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+      }
+
+      .page-title-group h1 {
+        font-size: 17px;
+      }
+
+      .page-title-group .subtitle {
+        font-size: 10px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 card produk berdampingan di mobile */
+        gap: 8px;
+      }
+
+      .card-top {
+        min-height: 72px;
+        padding: 7px 8px 6px;
+        gap: 3px;
+      }
+
+      .brand-chip {
+        font-size: 8.5px;
+        padding: 1.5px 5px;
+      }
+
+      .part-number-text {
+        font-size: 8px;
+      }
+
+      .product-title {
+        font-size: 10px;
+        min-height: 26px;
+        line-height: 1.25;
+      }
+
+      .price-row {
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+
+      .price-badge {
+        font-size: 11px;
+      }
+
+      .strike-price {
+        font-size: 8.5px;
+      }
+
+      .discount-tag {
+        font-size: 8px;
+        padding: 1px 3.5px;
+      }
+
+      .card-specs {
+        padding: 6px 8px;
+        gap: 2.5px;
+      }
+
+      .spec-line {
+        font-size: 8.5px;
+        line-height: 1.25;
+        gap: 4px;
+      }
+
+      .spec-key {
+        font-size: 8px;
+        flex-shrink: 0;
+      }
+
+      .spec-val {
+        font-size: 8.5px;
+        max-width: 95px;
+      }
+
+      .page-footer {
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+        font-size: 8px;
+      }
+    }
+
+    /* ══════════════════════════════════════════
        PRINT RULES (EXACT A4 LANDSCAPE - 12 PER SHEET)
        ══════════════════════════════════════════ */
     @media print {
