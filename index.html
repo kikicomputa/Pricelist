@@ -1347,22 +1347,8 @@
       }
     } catch(e) {}
 
-    // Pastikan jika data dari Google Sheets belum memiliki baris promo (karena script belum di-deploy New Version),
-    // kita sematkan contoh promo pada beberapa produk agar user bisa langsung melihat desain Coretan Kuas Hijau
-    function ensureSamplePromos(list) {
-      if (!Array.isArray(list) || list.length === 0) return;
-      const hasRealPromo = list.some(x => x.promoBonus || (x.specs && x.specs.some(s => s.isPromo)));
-      if (!hasRealPromo) {
-        list.forEach((item, idx) => {
-          if (idx === 0) item.promoBonus = "Free Mouse Wireless Optik + Mousepad";
-          else if (idx === 1) item.promoBonus = "Cashback Rp 500.000";
-          else if (idx === 3) item.promoBonus = "Voucher Belanja Rp 100.000";
-          else if (idx === 5) item.promoBonus = "Free Sleeve Case Computa";
-          else if (idx === 10) item.promoBonus = "Free Backpack Exclusive";
-        });
-      }
-    }
-    ensureSamplePromos(database);
+    // Pastikan hanya promo asli dari Google Sheets yang ditampilkan
+    // (Dummy promo otomatis dinonaktifkan agar data 100% akurat sesuai spreadsheet)
 
     // ════════════════════════════════════════════════════════════
     let currentActiveKey = null;
@@ -1492,17 +1478,39 @@
           let specRowsHtml = '';
           let promoText = '';
 
-          (p.specs || []).forEach(s => {
-            const isPromo = (s.label || '').toLowerCase() === 'promo' || (s.label || '').toLowerCase() === 'bonus' || s.isPromo;
+          (p.specs || []).forEach((s, sIdx) => {
+            const isPromo = (s.label || '').toLowerCase() === 'promo' || (s.label || '').toLowerCase() === 'bonus' || s.isPromo || sIdx >= 7;
             if (isPromo) {
               if (s.val && s.val !== '-' && s.val.trim() !== '') {
                 promoText = s.val.trim();
               }
             } else {
+              let displayVal = s.val || '-';
+
+              // Deteksi cerdas: Jika pengguna memasukkan promo di kolom Garansi setelah garis miring /
+              // Contoh di Google Sheets: "1 Year / Free Mouse Wireless"
+              if ((s.label || '').toLowerCase() === 'garansi' && displayVal !== '-') {
+                if (displayVal.includes('/')) {
+                  const slashParts = displayVal.split(/\s*[\/]\s*/);
+                  displayVal = slashParts[0].trim();
+                  if (!promoText && slashParts.slice(1).join(' / ').trim()) {
+                    promoText = slashParts.slice(1).join(' / ').trim();
+                  }
+                }
+                // Deteksi juga jika dipisah tanda strip - atau + (misal: "1Th - Wireless Keyboard Mouse", "1 Tahun - Keyboard+Mouse Wireless", "1Y Onsite - USB Keyboard Mouse")
+                const dashPromoMatch = displayVal.match(/^(.*?)\s*[-+]\s*(Free\b.*|Bonus\b.*|Cashback\b.*|Voucher\b.*|Hadiah\b.*|Wired\b.*|Wireless\b.*|Mouse\b.*|Keyboard\b.*|USB\b.*|Tas\b.*|Bag\b.*)$/i);
+                if (dashPromoMatch) {
+                  displayVal = dashPromoMatch[1].trim();
+                  if (!promoText) {
+                    promoText = dashPromoMatch[2].trim();
+                  }
+                }
+              }
+
               specRowsHtml += `
                 <div class="spec-line">
                   <span class="spec-key">${s.label}</span>
-                  <span class="spec-val" title="${s.val}">${s.val}</span>
+                  <span class="spec-val" title="${displayVal}">${displayVal}</span>
                 </div>`;
             }
           });
@@ -1510,7 +1518,7 @@
           // Cek fallback promo jika belum ada di specs
           if (!promoText) {
             const extraPromo = (p.promoBonus || p.bonusPromo || p.promo || '').trim();
-            if (extraPromo && extraPromo !== '-') {
+            if (extraPromo && extraPromo !== '-' && extraPromo.toLowerCase() !== 'null') {
               promoText = extraPromo;
             }
           }
@@ -1709,7 +1717,6 @@
         const freshData = await res.json();
 
         if (Array.isArray(freshData) && freshData.length > 0) {
-          ensureSamplePromos(freshData);
           database = freshData;
           try {
             localStorage.setItem('COMPUTA_DATABASE_V2', JSON.stringify(database));
