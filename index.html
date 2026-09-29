@@ -1481,8 +1481,9 @@
           (p.specs || []).forEach((s, sIdx) => {
             const isPromo = (s.label || '').toLowerCase() === 'promo' || (s.label || '').toLowerCase() === 'bonus' || s.isPromo || sIdx >= 7;
             if (isPromo) {
-              if (s.val && s.val !== '-' && s.val.trim() !== '') {
-                promoText = s.val.trim();
+              const v = (s.val || '').trim();
+              if (v && v !== '-' && v !== 'Rp' && v !== 'Rp.' && v.toLowerCase() !== 'null') {
+                promoText = v;
               }
             } else {
               let displayVal = s.val || '-';
@@ -1493,11 +1494,12 @@
                 if (displayVal.includes('/')) {
                   const slashParts = displayVal.split(/\s*[\/]\s*/);
                   displayVal = slashParts[0].trim();
-                  if (!promoText && slashParts.slice(1).join(' / ').trim()) {
-                    promoText = slashParts.slice(1).join(' / ').trim();
+                  const pot = slashParts.slice(1).join(' / ').trim();
+                  if (!promoText && pot && pot !== 'Rp' && pot !== 'Rp.' && pot !== '-') {
+                    promoText = pot;
                   }
                 }
-                // Deteksi juga jika dipisah tanda strip - atau + (misal: "1Th - Wireless Keyboard Mouse", "1 Tahun - Keyboard+Mouse Wireless", "1Y Onsite - USB Keyboard Mouse")
+                // Deteksi juga jika dipisah tanda strip - atau +
                 const dashPromoMatch = displayVal.match(/^(.*?)\s*[-+]\s*(Free\b.*|Bonus\b.*|Cashback\b.*|Voucher\b.*|Hadiah\b.*|Wired\b.*|Wireless\b.*|Mouse\b.*|Keyboard\b.*|USB\b.*|Tas\b.*|Bag\b.*)$/i);
                 if (dashPromoMatch) {
                   displayVal = dashPromoMatch[1].trim();
@@ -1515,12 +1517,17 @@
             }
           });
 
-          // Cek fallback promo jika belum ada di specs
+          // Cek fallback promo jika belum ada di specs (hanya jika bukan 'Rp')
           if (!promoText) {
             const extraPromo = (p.promoBonus || p.bonusPromo || p.promo || '').trim();
-            if (extraPromo && extraPromo !== '-' && extraPromo.toLowerCase() !== 'null') {
+            if (extraPromo && extraPromo !== '-' && extraPromo !== 'Rp' && extraPromo !== 'Rp.' && extraPromo.toLowerCase() !== 'null') {
               promoText = extraPromo;
             }
+          }
+
+          // Bersihkan promoText: Jika bernilai 'Rp', jangan tampilkan baris promo sama sekali!
+          if (promoText === 'Rp' || promoText === 'Rp.' || promoText === '-' || promoText.toLowerCase() === 'null') {
+            promoText = '';
           }
 
           // Jika ada promo, tambahkan tepat di bawah garansi secara bersih TANPA gambar/ikon agar muat
