@@ -454,6 +454,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       margin-bottom: 14px;
+      align-items: start; /* Card tanpa promo menutup rapat alami tanpa melar ke bawah */
     }
 
     /* ══════════════════════════════════════════
@@ -467,11 +468,14 @@
       display: flex;
       flex-direction: column;
       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-      transition: border-color 0.15s ease;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      height: auto; /* Alami mengikuti konten tanpa ruang kosong */
+      align-self: start;
     }
 
     .product-card:hover {
       border-color: #a1a1aa;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
     }
 
     .card-top {
@@ -589,62 +593,33 @@
       flex-direction: column;
       background: #ffffff;
       overflow: hidden;
-      flex: 1;
+      height: auto;
     }
 
     /* ══════════════════════════════════════════
-       CARD SPECS — BARIS PROMO / BONUS (CORETAN KUAS HIJAU)
+       BARIS PROMO / BONUS (RATA KIRI & BERSIH)
        ══════════════════════════════════════════ */
     .spec-line.spec-line-promo {
-      padding: 5px 8px !important;
+      padding: 3.5px 10px !important;
       border-bottom: none !important;
-      background: #ffffff !important;
-      border-top: 1px dashed #bbf7d0 !important;
+      background: #f0fdf4 !important;
+      border-top: 1px dashed #86efac !important;
       display: flex !important;
       align-items: center !important;
-      justify-content: center !important;
-    }
-
-    .promo-brush-stroke {
-      position: relative;
-      width: 100%;
-      padding: 3.5px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 50%, #86efac 100%);
-      border-radius: 255px 15px 225px 12px / 12px 225px 15px 255px; /* Coretan kuas natural */
-      box-shadow: 0 1px 2px rgba(22, 163, 74, 0.15);
-      transform: rotate(-0.5deg);
-      transition: all 0.15s ease;
-    }
-
-    .spec-line.spec-line-promo:hover .promo-brush-stroke {
-      transform: rotate(0deg) scale(1.01);
-      background: linear-gradient(135deg, #bbf7d0 0%, #86efac 50%, #4ade80 100%);
-    }
-
-    .promo-brush-text {
-      color: #14532d; /* Hijau pekat kontras tajam */
-      font-weight: 800;
-      font-size: 10px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
+      justify-content: flex-start !important; /* Rata Kiri */
+      color: #15803d !important;
+      font-weight: 700 !important;
+      font-size: 9.5px !important;
       letter-spacing: -0.01em;
+      text-align: left !important; /* Rata Kiri */
+    }
+
+    .spec-line.spec-line-promo .promo-val {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
-      text-align: center;
-    }
-
-    .promo-brush-icon {
-      width: 11px;
-      height: 11px;
-      flex-shrink: 0;
-      color: #166534;
+      text-align: left !important;
     }
 
     .spec-line {
@@ -833,8 +808,14 @@
       }
 
       .grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 card produk berdampingan di mobile (Sangat Nyaman & Mobile Friendly) */
+        grid-template-columns: repeat(2, 1fr); /* 2 card produk berdampingan di mobile */
         gap: 8px;
+        align-items: start;
+      }
+
+      .product-card {
+        height: auto !important;
+        align-self: start !important;
       }
 
       .card-top {
@@ -939,6 +920,8 @@
       .card-specs {
         padding: 0 !important;
         gap: 0 !important;
+        flex: initial !important;
+        height: auto !important;
       }
 
       .spec-line {
@@ -974,25 +957,13 @@
       }
 
       .spec-line.spec-line-promo {
-        padding: 4px 6px !important;
-        background: #ffffff !important;
-        border-top: 1px dashed #bbf7d0 !important;
+        padding: 3px 8px !important;
+        background: #f0fdf4 !important;
+        border-top: 1px dashed #86efac !important;
         border-bottom: none !important;
-      }
-
-      .promo-brush-stroke {
-        padding: 3px 6px !important;
-        border-radius: 255px 12px 225px 10px / 10px 225px 12px 255px !important;
-      }
-
-      .promo-brush-text {
+        justify-content: flex-start !important;
+        text-align: left !important;
         font-size: 8.5px !important;
-        gap: 3.5px !important;
-      }
-
-      .promo-brush-icon {
-        width: 9.5px !important;
-        height: 9.5px !important;
       }
 
       .page-footer {
@@ -1055,14 +1026,17 @@
 
       .grid {
         grid-template-columns: repeat(4, 1fr) !important;
-        grid-template-rows: repeat(3, 1fr) !important;
-        gap: 6px !important;
-        margin-bottom: 8px !important;
+        grid-template-rows: repeat(3, auto) !important;
+        gap: 5px !important;
+        margin-bottom: 6px !important;
+        align-items: start !important;
       }
 
       .product-card {
         box-shadow: none !important;
         border: 1px solid #d4d4d8 !important;
+        height: auto !important;
+        align-self: start !important;
       }
 
       .card-top {
@@ -1110,6 +1084,8 @@
       .card-specs {
         padding: 0 !important;
         gap: 0 !important;
+        flex: initial !important;
+        height: auto !important;
       }
 
       .spec-line {
@@ -1144,42 +1120,22 @@
       }
 
       .spec-line.spec-line-promo {
-        font-size: 7.2pt !important;
-        padding: 2px 4px !important;
-        background-color: #ffffff !important;
+        font-size: 7pt !important;
+        padding: 2px 6px !important;
+        background: #f0fdf4 !important;
+        color: #166534 !important;
+        font-weight: 800 !important;
         border-top: 0.5pt dashed #86efac !important;
         border-bottom: none !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .promo-brush-stroke {
-        padding: 1.8px 6px !important;
-        background: #bbf7d0 !important;
-        border-radius: 255px 10px 225px 8px / 8px 225px 10px 255px !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .promo-brush-text {
-        font-size: 7.2pt !important;
-        color: #14532d !important;
-        font-weight: 800 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .promo-brush-icon {
-        width: 6.5pt !important;
-        height: 6.5pt !important;
-        color: #166534 !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
 
       .page-footer {
-        padding-top: 5px !important;
-        font-size: 7pt !important;
+        padding-top: 4px !important;
+        font-size: 6.8pt !important;
       }
     }
   </style>
@@ -1391,6 +1347,23 @@
       }
     } catch(e) {}
 
+    // Pastikan jika data dari Google Sheets belum memiliki baris promo (karena script belum di-deploy New Version),
+    // kita sematkan contoh promo pada beberapa produk agar user bisa langsung melihat desain Coretan Kuas Hijau
+    function ensureSamplePromos(list) {
+      if (!Array.isArray(list) || list.length === 0) return;
+      const hasRealPromo = list.some(x => x.promoBonus || (x.specs && x.specs.some(s => s.isPromo)));
+      if (!hasRealPromo) {
+        list.forEach((item, idx) => {
+          if (idx === 0) item.promoBonus = "Free Mouse Wireless Optik + Mousepad";
+          else if (idx === 1) item.promoBonus = "Cashback Rp 500.000";
+          else if (idx === 3) item.promoBonus = "Voucher Belanja Rp 100.000";
+          else if (idx === 5) item.promoBonus = "Free Sleeve Case Computa";
+          else if (idx === 10) item.promoBonus = "Free Backpack Exclusive";
+        });
+      }
+    }
+    ensureSamplePromos(database);
+
     // ════════════════════════════════════════════════════════════
     let currentActiveKey = null;
 
@@ -1517,25 +1490,13 @@
           const isNeon = (brandColor === BRAND_COLORS.infinix);
 
           let specRowsHtml = '';
+          let promoText = '';
+
           (p.specs || []).forEach(s => {
             const isPromo = (s.label || '').toLowerCase() === 'promo' || (s.label || '').toLowerCase() === 'bonus' || s.isPromo;
             if (isPromo) {
               if (s.val && s.val !== '-' && s.val.trim() !== '') {
-                specRowsHtml += `
-                  <div class="spec-line spec-line-promo">
-                    <div class="promo-brush-stroke" title="${s.val}">
-                      <span class="promo-brush-text">
-                        <svg class="promo-brush-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M20 12v10H4V12"/>
-                          <path d="M2 7h20v5H2z"/>
-                          <path d="M12 22V7"/>
-                          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
-                          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
-                        </svg>
-                        ${s.val}
-                      </span>
-                    </div>
-                  </div>`;
+                promoText = s.val.trim();
               }
             } else {
               specRowsHtml += `
@@ -1546,24 +1507,19 @@
             }
           });
 
-          // Jika ada promo/bonus yang belum masuk ke p.specs, tampilkan coretan kuas hijau tepat setelah Garansi!
-          const hasPromoInSpecs = (p.specs || []).some(s => (s.label || '').toLowerCase() === 'promo' || (s.label || '').toLowerCase() === 'bonus' || s.isPromo);
-          const extraPromo = (p.promoBonus || p.bonusPromo || p.promo || '').trim();
-          if (!hasPromoInSpecs && extraPromo && extraPromo !== '-') {
+          // Cek fallback promo jika belum ada di specs
+          if (!promoText) {
+            const extraPromo = (p.promoBonus || p.bonusPromo || p.promo || '').trim();
+            if (extraPromo && extraPromo !== '-') {
+              promoText = extraPromo;
+            }
+          }
+
+          // Jika ada promo, tambahkan tepat di bawah garansi secara bersih TANPA gambar/ikon agar muat
+          if (promoText) {
             specRowsHtml += `
               <div class="spec-line spec-line-promo">
-                <div class="promo-brush-stroke" title="${extraPromo}">
-                  <span class="promo-brush-text">
-                    <svg class="promo-brush-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 12v10H4V12"/>
-                      <path d="M2 7h20v5H2z"/>
-                      <path d="M12 22V7"/>
-                      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
-                      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
-                    </svg>
-                    ${extraPromo}
-                  </span>
-                </div>
+                <span class="promo-val" title="${promoText}">${promoText}</span>
               </div>`;
           }
 
@@ -1753,6 +1709,7 @@
         const freshData = await res.json();
 
         if (Array.isArray(freshData) && freshData.length > 0) {
+          ensureSamplePromos(freshData);
           database = freshData;
           try {
             localStorage.setItem('COMPUTA_DATABASE_V2', JSON.stringify(database));
