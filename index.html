@@ -1223,29 +1223,16 @@
 
   <script>
     // ════════════════════════════════════════════════════════════
-    // KONFIGURASI TANGGAL UPDATE KATALOG
+    // TANGGAL OTOMATIS MENGIKUTI HARI DUNIA NYATA (REAL-TIME TODAY)
     // ════════════════════════════════════════════════════════════
-    // Opsi pengaturan:
-    // 1. "AUTO" : Otomatis mendeteksi tanggal upload / penyimpanan berkas HTML
-    // 2. Atau ketik tanggal manual, contoh: "22 September 2026"
-    const TANGGAL_UPLOAD = "AUTO";
-
     const INDO_MONTHS = [
       "Januari", "Februari", "Maret", "April", "Mei", "Juni",
       "Juli", "Agustus", "September", "Oktober", "November", "Desember"
     ];
 
     function getCatalogDate() {
-      if (TANGGAL_UPLOAD && TANGGAL_UPLOAD !== "AUTO") {
-        return TANGGAL_UPLOAD;
-      }
-      try {
-        const mod = new Date(document.lastModified);
-        if (!isNaN(mod.getTime())) {
-          return `${mod.getDate()} ${INDO_MONTHS[mod.getMonth()]} ${mod.getFullYear()}`;
-        }
-      } catch (e) {}
-      return "25 September 2026";
+      const now = new Date();
+      return `${now.getDate()} ${INDO_MONTHS[now.getMonth()]} ${now.getFullYear()}`;
     }
 
     function applyDateToDom() {
@@ -1254,6 +1241,9 @@
         el.textContent = dateText;
       });
     }
+
+    // Terapkan langsung tanggal hari ini ke seluruh elemen DOM
+    applyDateToDom();
 
     // ════════════════════════════════════════════════════════════
     // KONFIGURASI API GOOGLE APPS SCRIPT
