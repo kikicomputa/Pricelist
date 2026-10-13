@@ -1367,6 +1367,61 @@
     let currentTotalPages = 1;
     let activePageIndex = 0;
 
+    // ════════════════════════════════════════════════════════════
+    // AUTO-DETEKSI & NORMALISASI PRINTER & LAPTOP
+    // ════════════════════════════════════════════════════════════
+    const PRINTER_SPEC_LABELS = [
+      "Fungsi",
+      "Kecepatan",
+      "Resolusi",
+      "Konektivitas",
+      "Ukuran Kertas",
+      "Garansi",
+      "Tinta / Fitur"
+    ];
+
+    function normalizeItem(item) {
+      if (!item) return item;
+      const m = (item.merk || '').replace(/\(TKDN\)/gi, '').trim().toLowerCase();
+      const n = (item.namaBarang || '').toLowerCase();
+      const cat = (item.category || '').toLowerCase();
+      const firstSpecVal = (item.specs && item.specs[0] && String(item.specs[0].val || '').toLowerCase()) || '';
+      
+      const isKnownPrinterBrand = ['epson', 'canon', 'brother', 'oki', 'zenpert', 'xyz'].includes(m);
+      const isHpPrinter = (m === 'hp' || m.includes('hp')) && (
+        n.includes('tank') || n.includes('smart tank') || n.includes('laserjet') ||
+        n.includes('deskjet') || n.includes('ink tank') || n.includes('printer') ||
+        firstSpecVal.startsWith('print')
+      );
+      const isGeneralPrinter = n.includes('printer') || n.includes('ink tank') || n.includes('inktank') || n.includes('smart tank') || n.includes('ecotank') || n.includes('pixma');
+
+      if (cat === 'printer' || isKnownPrinterBrand || isHpPrinter || isGeneralPrinter) {
+        item.category = 'printer';
+
+        // Konversi label spesifikasi dari label laptop (Processor, RAM, dsb) ke label printer standar
+        if (Array.isArray(item.specs)) {
+          item.specs.forEach((spec, idx) => {
+            if (spec.isPromo || (spec.label && spec.label.toLowerCase() === 'promo')) {
+              spec.label = 'Promo';
+              spec.isPromo = true;
+            } else if (idx < PRINTER_SPEC_LABELS.length && (
+              spec.label === 'Processor' || spec.label === 'RAM' || 
+              spec.label === 'Storage' || spec.label === 'Graphics' || 
+              spec.label === 'Display' || spec.label === 'OS + Office' ||
+              (idx === 6 && spec.label === 'Garansi')
+            )) {
+              spec.label = PRINTER_SPEC_LABELS[idx];
+            }
+          });
+        }
+      } else if (cat === 'laptop') {
+        if (m === 'apple' || n.includes('macbook')) {
+          item.category = 'apple';
+        }
+      }
+      return item;
+    }
+
     // Persistensi data lokal dari sinkronisasi Google Sheets terakhir
     try {
       const cached = localStorage.getItem('COMPUTA_DATABASE_V4');
@@ -1377,6 +1432,11 @@
         }
       }
     } catch(e) {}
+
+    // Normalisasi data yang ada di database awal
+    if (Array.isArray(database)) {
+      database.forEach(normalizeItem);
+    }
 
     // Pastikan hanya promo asli dari Google Sheets yang ditampilkan
     // (Dummy promo otomatis dinonaktifkan agar data 100% akurat sesuai spreadsheet)
@@ -1565,6 +1625,9 @@
               }
             } else {
               let displayVal = s.val || '-';
+              if (p.category === 'printer' && s.label === 'Tinta / Fitur' && (displayVal === '-' || !s.val)) {
+                return;
+              }
 
               // Deteksi cerdas: Jika pengguna memasukkan promo di kolom Garansi setelah garis miring /
               // Contoh di Google Sheets: "1 Year / Free Mouse Wireless"
@@ -1802,6 +1865,7 @@
         const freshData = await res.json();
 
         if (Array.isArray(freshData) && freshData.length > 0) {
+          freshData.forEach(normalizeItem);
           const hasApple = freshData.some(item => {
             const m = (item.merk || '').toLowerCase();
             const n = (item.namaBarang || '').toLowerCase();
@@ -1826,6 +1890,7 @@
             const fallbackPrinters = database.filter(item => item.category === 'printer');
             merged = [...merged, ...fallbackPrinters];
           }
+          merged.forEach(normalizeItem);
           database = merged;
           try {
             localStorage.setItem('COMPUTA_DATABASE_V4', JSON.stringify(database));
