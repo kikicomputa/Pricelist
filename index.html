@@ -1309,12 +1309,28 @@
       return '#15803d'; // Default fallback (Emerald Green)
     }
 
+    function parseCurrency(val) {
+      if (val === null || val === undefined || val === '') return 0;
+      if (typeof val === 'number') return val;
+      let str = String(val).trim();
+      str = str.replace(/,\d+$/, '');   // Buang desimal seperti ,00
+      str = str.replace(/[^\d]/g, '');  // Ambil hanya digit angka
+      const num = parseInt(str, 10);
+      return isNaN(num) ? 0 : num;
+    }
+
+    function formatRupiahClean(val) {
+      const num = parseCurrency(val);
+      if (num === 0) return 'Rp 0';
+      return 'Rp ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
     function getNumericPrice(item) {
       if (!item) return 0;
-      // Gunakan harga promo online jika aktif, atau harga publish
-      const raw = (item.hasPromo && item.hrgOnline) ? item.hrgOnline : (item.hrgPublish || '');
-      const digits = String(raw).replace(/\D/g, '');
-      return digits ? parseInt(digits, 10) : 0;
+      const pOnline = parseCurrency(item.hrgOnline);
+      const pPublish = parseCurrency(item.hrgPublish);
+      if (item.hasPromo && pOnline > 0) return pOnline;
+      return pOnline > 0 ? pOnline : pPublish;
     }
 
     function formatBrandName(merk) {
@@ -1419,6 +1435,28 @@
           item.category = 'apple';
         }
       }
+
+      // Normalisasi Harga & Deteksi Promo (Mendukung format Indonesia "1.600.000,00")
+      // Catatan: Badge diskon ditiadakan sesuai permintaan
+      const numPublish = parseCurrency(item.hrgPublish);
+      const numOnline  = parseCurrency(item.hrgOnline);
+
+      if (numOnline > 0 && numPublish > 0 && numOnline < numPublish) {
+        item.hasPromo = true;
+        item.discountPercent = ''; // Badge diskon dihapus
+        item.hrgPublish = formatRupiahClean(numPublish);
+        item.hrgOnline  = formatRupiahClean(numOnline);
+      } else if (numOnline > 0 && (numPublish === 0 || numOnline >= numPublish)) {
+        item.hasPromo = false;
+        item.discountPercent = '';
+        item.hrgPublish = formatRupiahClean(numOnline);
+        item.hrgOnline  = formatRupiahClean(numOnline);
+      } else if (numPublish > 0) {
+        item.hasPromo = false;
+        item.discountPercent = '';
+        item.hrgPublish = formatRupiahClean(numPublish);
+      }
+
       return item;
     }
 
